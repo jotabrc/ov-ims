@@ -20,4 +20,4 @@ Microsservice RESTful API for inventory management.
    1. Data JPA / Hibernate
 
 # Fluxogram
-![fluxogram.png](../docs/fluxogram.png)
+![fluxogram.png](docs/fluxogram.png)
