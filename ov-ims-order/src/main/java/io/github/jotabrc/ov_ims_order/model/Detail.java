@@ -14,7 +14,7 @@ public class Detail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "product_uuid")
+    @Column(name = "product_uuid", length = 36, nullable = false, unique = true)
     private String productUuid;
 
     @Column(name = "unit_price")

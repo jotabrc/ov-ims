@@ -1,15 +1,19 @@
-package io.github.jotabrc.ov_ims_order.model;
+package io.github.jotabrc.ov_ims_product.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Collection;
+import java.util.Set;
 
 @Data
-@Entity(name = "tb_order")
-public class Order {
+@Accessors(chain = true)
+@Builder
+@NoArgsConstructor @AllArgsConstructor
+@Entity(name = "tb_product")
+public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,23 +22,28 @@ public class Order {
     @Column(length = 36, nullable = false, unique = true)
     private String uuid;
 
-    @Column(length = 36, nullable = false, unique = true)
-    private String placedBy;
-    private double total;
+    @Column(nullable = false, unique = true)
+    private String name;
+
+    @Column(length = 500)
+    private String description;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = "tb_order_detail",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "detail_id")
+            name = "tb_product_category",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    private Collection<Detail> details;
+    private Set<Category> categories;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "is_active")
+    private boolean isActive;
 
     @Version
     private long version;
