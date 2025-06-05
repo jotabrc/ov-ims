@@ -7,7 +7,7 @@ import io.github.jotabrc.ov_ims_product.model.Category;
 import io.github.jotabrc.ov_ims_product.model.Product;
 import io.github.jotabrc.ov_ims_product.repository.ProductRepository;
 import io.github.jotabrc.ov_ims_product.util.DtoMapper;
-import io.github.jotabrc.ov_ims_product.util.EntityCreatorMapperImpl;
+import io.github.jotabrc.ov_ims_product.util.EntityCreatorMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,13 +25,13 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
 
-    private final EntityCreatorMapperImpl entityMapperImpl;
+    private final EntityCreatorMapper entityMapper;
     private final DtoMapper dtoMapper;
 
     @Transactional
     @Override
     public String save(final ProductDto dto) {
-        Product product = entityMapperImpl.toEntity(dto);
+        Product product = entityMapper.toEntity(dto);
         Set<Category> categories = categoryService.resolveCategories(dto.getCategories());
         product.setCategories(categories);
         return productRepository.save(product).getUuid();
