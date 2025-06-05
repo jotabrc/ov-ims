@@ -16,7 +16,7 @@ public class Order {
     private long id;
 
     private String uuid;
-    private String placedBy;
+    private String place mergedBy;
     private double total;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
