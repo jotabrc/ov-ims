@@ -1,3 +1,5 @@
 /ov-ims-order/.env.postgres
 /ov-ims-order/.env
 /.idea/
+/ov-ims-inv/.env
+/ov-ims-inv/.env.postgres

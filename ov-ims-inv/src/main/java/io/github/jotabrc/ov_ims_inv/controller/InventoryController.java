@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -44,5 +46,13 @@ public class InventoryController {
         Object result = inventoryService.get(pageFilter, pageable);
         return ResponseEntity
                 .ok(result);
+    }
+
+    @RequestMapping(method = RequestMethod.OPTIONS)
+    public ResponseEntity<String> options() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .allow(HttpMethod.PUT, HttpMethod.GET)
+                .build();
     }
 }
