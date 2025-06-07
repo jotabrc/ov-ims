@@ -1,12 +1,18 @@
 package io.github.jotabrc.ov_ims_inv.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-@Data
+@Data @Builder @Accessors(chain = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "tb_inventory")
 public class Inventory {
 

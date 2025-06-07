@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: ov-ims-inv
+  datasource:
+    url: jdbc:h2:mem:dev
+    username: dev
+    password:
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: false
+        web-allow-others: false
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui
+
+logging:
+  level:
+    io.lettuce.core: TRACE
+    io.lettuce: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.servlet.DispatcherServlet: DEBUG
+    org.springframework.data.redis: DEBUG
+    org.springframework.cache.interceptor: DEBUG
