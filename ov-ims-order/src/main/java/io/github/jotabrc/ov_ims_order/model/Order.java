@@ -1,13 +1,18 @@
 package io.github.jotabrc.ov_ims_order.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Collection;
+import java.util.List;
 
-@Data
+@Data @Builder
+@NoArgsConstructor @AllArgsConstructor
 @Entity(name = "tb_order")
 public class Order {
 
@@ -18,17 +23,22 @@ public class Order {
     @Column(length = 36, nullable = false, unique = true)
     private String uuid;
 
-    @Column(length = 36, nullable = false, unique = true)
+    @Column(name = "placed_by", length = 36, nullable = false, unique = true)
     private String placedBy;
-    private double total;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Column(precision = 10, scale = 2)
+    private BigDecimal total;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "tb_order_detail",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "detail_id")
     )
-    private Collection<Detail> details;
+    private List<Detail> details;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;

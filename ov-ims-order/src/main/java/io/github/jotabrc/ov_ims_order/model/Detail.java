@@ -1,12 +1,18 @@
 package io.github.jotabrc.ov_ims_order.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-@Data
+@Data @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "tb_detail")
 public class Detail {
 
@@ -17,8 +23,8 @@ public class Detail {
     @Column(name = "product_uuid", length = 36, nullable = false, unique = true)
     private String productUuid;
 
-    @Column(name = "unit_price")
-    private double unitPrice;
+    @Column(name = "unit_price", scale = 10, precision = 2)
+    private BigDecimal unitPrice;
 
     private int quantity;
 

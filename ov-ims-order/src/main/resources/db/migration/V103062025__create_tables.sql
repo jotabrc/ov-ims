@@ -1,8 +1,9 @@
 CREATE TABLE IF NOT EXISTS tb_order (
     id BIGSERIAL PRIMARY KEY,
     uuid VARCHAR(36) NOT NULL UNIQUE,
-    placedBy VARCHAR(36) NOT NULL,
+    placed_by VARCHAR(36) NOT NULL,
     total DECIMAL(10,2) NOT NULL,
+    status VARCHAR(20) NOT NULL,
     updated_at TIMESTAMP NOT NULL,
     created_at TIMESTAMP NOT NULL,
     version BIGINT
