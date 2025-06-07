@@ -17,9 +17,17 @@ public class UpdateStrategyCancellation implements UpdateStrategy {
 
     private void cancelOrThrow(final Order order, final OrderStatus status) {
         if (!isCancellationAvailable(order.getStatus()))
-            throw new IllegalStateException("Order ineligible for cancellation");
-        else if (!status.equals(OrderStatus.CANCELLED))
-            throw new IllegalStateException("New Order Status is incompatible with request, for cancellation CANCEL status is required");
+            throw new IllegalStateException(
+                    "Order %s with status %s ineligible for cancellation"
+                    .formatted(order.getUuid(), order.getStatus())
+            );
+
+        if (!status.equals(OrderStatus.CANCELLED))
+            throw new IllegalStateException(
+                    "Invalid status update: Expected CANCELLED, received %s"
+                            .formatted(status)
+            );
+
         order.setStatus(OrderStatus.CANCELLED);
     }
 

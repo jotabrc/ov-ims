@@ -32,7 +32,7 @@ public class DtoMapperImpl implements DtoMapper {
     }
 
     @Override
-    public DetailDto toReturnDto(final Detail detail, final DetailUpdateDto dto) {
+    public DetailDto toDtoReturnType(final Detail detail, final DetailUpdateDto dto) {
         return new DetailDto(
                 detail.getProductUuid(),
                 -dto.getQuantity(),

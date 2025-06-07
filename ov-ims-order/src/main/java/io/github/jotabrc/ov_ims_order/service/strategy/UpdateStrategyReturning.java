@@ -13,6 +13,8 @@ import io.github.jotabrc.ov_ims_order.util.DtoMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,8 +39,12 @@ public class UpdateStrategyReturning implements UpdateStrategy {
     }
 
     private void isReturningDateValid(Order order) {
-        boolean isReturningDateValid = order.getCreatedAt()
-                .isBefore(order.getCreatedAt().plusDays(domainConfig.getMaxDays()));
+        boolean isReturningDateValid =
+                LocalDateTime.now(ZoneOffset.UTC)
+                        .isBefore(
+                                order.getCreatedAt()
+                                        .plusDays(domainConfig.getMaxDays())
+                        );
         if (!isReturningDateValid) throw new IllegalStateException("Returning date exceeds required range");
     }
 
@@ -60,10 +66,9 @@ public class UpdateStrategyReturning implements UpdateStrategy {
     private Map<String, Integer> getAvailableQuantity(Order order) {
         return order.getDetails()
                 .stream()
-                .collect(Collectors.toMap(
+                .collect(Collectors.groupingBy(
                         Detail::getProductUuid,
-                        Detail::getQuantity,
-                        Integer::sum
+                        Collectors.summingInt(Detail::getQuantity)
                 ));
     }
 
@@ -89,26 +94,33 @@ public class UpdateStrategyReturning implements UpdateStrategy {
     ) {
         AtomicBoolean hasQuantity = new AtomicBoolean(false);
         AtomicBoolean isReturningZero = new AtomicBoolean(false);
-        Optional<DetailUpdateDto> detailUpdateDto = dto
-                .getReturnItems()
-                .stream()
-                .filter(duDto -> {
-                            hasQuantity.set(duDto.getQuantity() <= availableQuantity);
-                            isReturningZero.set(duDto.getQuantity() == 0);
-                            return hasQuantity.get() &&
-                                    !isReturningZero.get() &&
-                                    duDto.getProductUuid().equals(detail.getProductUuid());
-                        }
-                )
-                .findFirst();
+        Optional<DetailUpdateDto> detailUpdateDto = getDetailUpdateDto(dto, detail, availableQuantity, hasQuantity, isReturningZero);
+
         if (isReturningZero.get())
             throw new IllegalStateException("Cannot return Zero items");
         else if (!hasQuantity.get())
-            throw new IllegalStateException("Order available quantity is lower then returning amount");
+            throw new IllegalStateException("Order %s: Available quantity (%d) is lower than returning amount"
+                    .formatted(dto.getUuid(), availableQuantity));
         else if (detailUpdateDto.isEmpty())
             throw new ProductNotFoundException("Product not found");
         else
             return detailUpdateDto.get();
+    }
+
+    private Optional<DetailUpdateDto> getDetailUpdateDto(OrderUpdateTypeDto dto, Detail detail, int availableQuantity, AtomicBoolean hasQuantity, AtomicBoolean isReturningZero) {
+        return dto
+                .getReturnItems()
+                .stream()
+                .filter(e -> {
+                    isReturningZero.set(e.getQuantity() == 0);
+                    return !isReturningZero.get();
+                })
+                .filter(e -> {
+                    hasQuantity.set(e.getQuantity() <= availableQuantity);
+                    return hasQuantity.get();
+                })
+                .filter(e -> e.getProductUuid().equals(detail.getProductUuid()))
+                .findFirst();
     }
 
     private List<DetailDto> getDetailDto(final Map<Detail, DetailUpdateDto> detailDetailUpdateDtoMap) {
@@ -116,7 +128,7 @@ public class UpdateStrategyReturning implements UpdateStrategy {
                 .entrySet()
                 .stream()
                 .map(entry ->
-                        dtoMapper.toReturnDto(entry.getKey(), entry.getValue())
+                        dtoMapper.toDtoReturnType(entry.getKey(), entry.getValue())
                 )
                 .toList();
     }

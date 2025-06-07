@@ -12,6 +12,6 @@ public interface DtoMapper {
 
     OrderDto toDto(Order order);
     DetailDto toDto(Detail detail);
-    DetailDto toReturnDto(Detail detail, DetailUpdateDto dto);
+    DetailDto toDtoReturnType(Detail detail, DetailUpdateDto dto);
     List<DetailDto> toDto(List<Detail> details);
 }
