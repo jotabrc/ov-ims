@@ -4,7 +4,9 @@ networks:
   app-network:
     driver: bridge
 
-#volumes:
+volumes:
+  redis-data:
+
 #  data-product-postgres-sql:
 #  data-inv-postgres-sql:
 #  data-order-postgres-sql:
@@ -63,6 +65,26 @@ services:
 #        condition: on-failure
 #    networks:
 #      - app-network
+
+  redis-cache:
+    image: redis:8.0.1-alpine
+    volumes:
+      - redis-data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      REDIS_PASSWORD: admin
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == database
+      restart_policy:
+        condition: on-failure
 
   ov-ims-product:
 #    depends_on:
