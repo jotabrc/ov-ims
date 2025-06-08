@@ -1,5 +1,6 @@
 package io.github.jotabrc.ov_ims_order.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.jotabrc.ov_ims_order.dto.OrderDto;
 import io.github.jotabrc.ov_ims_order.dto.OrderDtoAdd;
 import io.github.jotabrc.ov_ims_order.dto.OrderUpdateTypeDto;
@@ -29,7 +30,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<String> save(@Valid @RequestBody final OrderDtoAdd dto) {
+    public ResponseEntity<String> save(@Valid @RequestBody final OrderDtoAdd dto) throws JsonProcessingException {
         String uuid = orderService.save(dto);
         URI location = ServletUriComponentsBuilder
                 .fromPath("/order/{uuid}")
@@ -41,7 +42,7 @@ public class OrderController {
     }
 
     @PutMapping
-    public ResponseEntity<String> update(@Valid @RequestBody OrderUpdateTypeDto dto) {
+    public ResponseEntity<String> update(@Valid @RequestBody OrderUpdateTypeDto dto) throws JsonProcessingException {
         orderService.update(dto);
         return ResponseEntity
                 .noContent()

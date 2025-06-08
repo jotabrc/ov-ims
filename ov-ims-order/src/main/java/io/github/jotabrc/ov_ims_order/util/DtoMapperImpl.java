@@ -1,8 +1,6 @@
 package io.github.jotabrc.ov_ims_order.util;
 
-import io.github.jotabrc.ov_ims_order.dto.DetailDto;
-import io.github.jotabrc.ov_ims_order.dto.DetailUpdateDto;
-import io.github.jotabrc.ov_ims_order.dto.OrderDto;
+import io.github.jotabrc.ov_ims_order.dto.*;
 import io.github.jotabrc.ov_ims_order.model.Detail;
 import io.github.jotabrc.ov_ims_order.model.Order;
 import org.springframework.stereotype.Component;
@@ -46,5 +44,45 @@ public class DtoMapperImpl implements DtoMapper {
                 .stream()
                 .map(this::toDto)
                 .toList();
+    }
+
+    @Override
+    public ProductDtoUuidAndQuantity toDto(DetailDto dto) {
+        return new ProductDtoUuidAndQuantity(
+                dto.getProductUuid(),
+                dto.getQuantity()
+        );
+    }
+
+    @Override
+    public OrderDtoKafka toDto(String uuid, String type, OrderDtoAdd dto) {
+        return new OrderDtoKafka(
+                uuid,
+                type,
+                dto.getDetails()
+                        .stream()
+                        .map(this::toDto)
+                        .toList()
+        );
+    }
+
+    @Override
+    public OrderDtoKafka toDto(String uuid, String type, OrderUpdateTypeDto dto) {
+        return new OrderDtoKafka(
+                uuid,
+                type,
+                dto.getReturnItems()
+                        .stream()
+                        .map(this::toDto)
+                        .toList()
+        );
+    }
+
+    @Override
+    public ProductDtoUuidAndQuantity toDto(DetailUpdateDto dto) {
+        return new ProductDtoUuidAndQuantity(
+                dto.getProductUuid(),
+                dto.getQuantity()
+        );
     }
 }

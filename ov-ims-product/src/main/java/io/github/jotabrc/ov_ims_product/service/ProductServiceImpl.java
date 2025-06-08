@@ -1,8 +1,10 @@
 package io.github.jotabrc.ov_ims_product.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.jotabrc.ov_ims_product.controller.handler.ProductNotFoundException;
 import io.github.jotabrc.ov_ims_product.dto.PageFilter;
 import io.github.jotabrc.ov_ims_product.dto.ProductDto;
+import io.github.jotabrc.ov_ims_product.kafka.KafkaProducer;
 import io.github.jotabrc.ov_ims_product.model.Category;
 import io.github.jotabrc.ov_ims_product.model.Product;
 import io.github.jotabrc.ov_ims_product.repository.ProductRepository;
@@ -11,6 +13,7 @@ import io.github.jotabrc.ov_ims_product.util.EntityCreatorMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -25,16 +28,19 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
 
+    private final KafkaProducer kafkaProducer;
     private final EntityCreatorMapper entityMapper;
     private final DtoMapper dtoMapper;
 
     @Transactional
     @Override
-    public String save(final ProductDto dto) {
+    public String save(final ProductDto dto) throws JsonProcessingException {
         Product product = entityMapper.toEntity(dto);
         Set<Category> categories = categoryService.resolveCategories(dto.getCategories());
         product.setCategories(categories);
-        return productRepository.save(product).getUuid();
+        String uuid = productRepository.save(product).getUuid();
+        sendProductNewTopic(uuid);
+        return uuid;
     }
 
     @Transactional
@@ -70,5 +76,13 @@ public class ProductServiceImpl implements ProductService {
         product
                 .setName(dto.getName())
                 .setDescription(dto.getDescription());
+    }
+
+    @Async
+    private void sendProductNewTopic(String uuid) throws JsonProcessingException {
+        kafkaProducer.produce(
+                kafkaProducer.build(uuid),
+                "PRODUCT_NEW"
+        );
     }
 }

@@ -1,6 +1,15 @@
 server:
+  port: 8082
 
 spring:
+  kafka:
+    bootstrap-servers: kafka-1:9092
+    consumer:
+      group-id: io.github.jotabrc
+      client-id: inventory-1
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
   application:
     name: ov-ims-order
   datasource:

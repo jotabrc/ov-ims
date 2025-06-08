@@ -7,6 +7,7 @@ public enum OrderStatus {
     PLACED,
     HAS_INVENTORY,
     PROCESSING,
+    READY_TO_DELIVERY,
     CANCELLED,
     IN_DELIVERY,
     DELIVERED;

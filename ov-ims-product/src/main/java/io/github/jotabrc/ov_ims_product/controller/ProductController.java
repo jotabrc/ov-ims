@@ -1,5 +1,6 @@
 package io.github.jotabrc.ov_ims_product.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.jotabrc.ov_ims_product.dto.PageFilter;
 import io.github.jotabrc.ov_ims_product.dto.ProductDto;
 import io.github.jotabrc.ov_ims_product.service.ProductService;
@@ -27,7 +28,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<String> save(@Valid @RequestBody final ProductDto dto) {
+    public ResponseEntity<String> save(@Valid @RequestBody final ProductDto dto) throws JsonProcessingException {
         final String uuid = productService.save(dto);
         URI location = ServletUriComponentsBuilder
                 .fromPath("/product/{uuid}")

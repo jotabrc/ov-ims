@@ -1,12 +1,11 @@
 package io.github.jotabrc.ov_ims_product;
 
-import io.github.jotabrc.ov_ims_product.config.DomainConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
-@EnableConfigurationProperties(DomainConfig.class)
+@EnableAsync
 public class OvImsProductApplication {
 
 	public static void main(String[] args) {

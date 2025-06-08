@@ -3,6 +3,7 @@ package io.github.jotabrc.ov_ims_inv.controller;
 import io.github.jotabrc.ov_ims_inv.dto.InventoryDtoUpdate;
 import io.github.jotabrc.ov_ims_inv.dto.PageFilter;
 import io.github.jotabrc.ov_ims_inv.service.InventoryService;
+import io.github.jotabrc.ov_ims_inv.service.InventoryUpdateService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -21,10 +22,11 @@ import org.springframework.web.bind.annotation.*;
 public class InventoryController {
 
     private final InventoryService inventoryService;
+    private final InventoryUpdateService inventoryUpdateService;
 
     @PutMapping
     public ResponseEntity<String> update(@Valid @RequestBody final InventoryDtoUpdate dto) {
-        inventoryService.update(dto);
+        inventoryUpdateService.update(dto);
         return ResponseEntity
                 .noContent()
                 .build();

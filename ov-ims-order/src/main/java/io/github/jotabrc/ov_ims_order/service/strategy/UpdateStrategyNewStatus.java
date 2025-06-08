@@ -23,8 +23,9 @@ public class UpdateStrategyNewStatus implements UpdateStrategy {
     }
 
     private void updateOrThrow(final Order order, OrderUpdateTypeDto dto) {
-        if (isNewStatusAvailable(order.getStatus(), dto.getStatus()))
+        if (isNewStatusAvailable(order.getStatus(), dto.getStatus())) {
             order.setStatus(dto.getStatus());
+        }
         else throw new IllegalStateException(
                 "Order %s with status (%s) cannot update to (%s). Allowed updates: [%s]"
                         .formatted(order.getUuid(), order.getStatus(), dto.getStatus(), allowedUpdates(order.getStatus()))
@@ -39,7 +40,8 @@ public class UpdateStrategyNewStatus implements UpdateStrategy {
         return switch (status) {
             case PLACED -> List.of(HAS_INVENTORY);
             case HAS_INVENTORY -> List.of(PROCESSING);
-            case PROCESSING -> List.of(IN_DELIVERY);
+            case PROCESSING -> List.of(READY_TO_DELIVERY);
+            case READY_TO_DELIVERY -> List.of(IN_DELIVERY);
             case IN_DELIVERY -> List.of(DELIVERED);
             case null, default -> List.of();
         };

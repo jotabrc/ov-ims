@@ -1,5 +1,6 @@
 package io.github.jotabrc.ov_ims_order.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.jotabrc.ov_ims_order.controller.handler.OrderNotFoundException;
 import io.github.jotabrc.ov_ims_order.dto.OrderDto;
 import io.github.jotabrc.ov_ims_order.dto.OrderDtoAdd;
@@ -29,23 +30,27 @@ public class OrderServiceImpl implements OrderService {
     private final DtoMapper dtoMapper;
 
     private final UpdateStrategyProcessor updateStrategyProcessor;
+    private final KafkaService kafkaService;
 
     @Transactional
     @Override
-    public String save(final OrderDtoAdd dto) {
+    public String save(final OrderDtoAdd dto) throws JsonProcessingException {
         Order order = entityCreatorMapper.toEntity(dto);
         setTotal(order);
-        return orderRepository.save(order).getUuid();
+        orderRepository.save(order);
+        kafkaService.requestInventoryUpdate(dto, order, "RESERVE_ADD");
+        return order.getUuid();
     }
 
     @Transactional
     @Override
-    public void update(final OrderUpdateTypeDto dto) {
+    public void update(final OrderUpdateTypeDto dto) throws JsonProcessingException {
         Order order = getOrElseThrow(dto.getUuid());
         updateStrategyProcessor
                 .select(dto)
                 .apply(order, dto);
         orderRepository.save(order);
+        kafkaService.requestInventoryUpdate(dto, order);
     }
 
     @Override

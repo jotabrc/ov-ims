@@ -33,7 +33,7 @@ public class UpdateStrategyCancellation implements UpdateStrategy {
 
     private boolean isCancellationAvailable(final OrderStatus status) {
         return switch (status) {
-            case PLACED, PROCESSING, HAS_INVENTORY -> true;
+            case PLACED, HAS_INVENTORY, PROCESSING, READY_TO_DELIVERY -> true;
             case null, default -> false;
         };
     }

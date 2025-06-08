@@ -2,31 +2,71 @@ version: "3.9"
 
 networks:
   app-network:
-    driver: overlay
+    driver: bridge
 
-volumes:
-  data-product-postgres-sql:
-
+#volumes:
+#  data-product-postgres-sql:
+#  data-inv-postgres-sql:
+#  data-order-postgres-sql:
+#
 services:
-  product-postgres-sql:
-    image: postgres:alpine
-    volumes:
-      - data-product-postgres-sql:/var/lib/postgresql/data
-    env_file:
-      - ov-ims-product/.env.postgres
-    ports:
-      - "5433:5432"
-    deploy:
-      replicas: 1
-      placement:
-        constraints:
-          - node.hostname == database
-      restart_policy:
-        condition: on-failure
+#  product-postgres-sql:
+#    image: postgres:alpine
+#    volumes:
+#      - data-product-postgres-sql:/var/lib/postgresql/data
+#    env_file:
+#      - ov-ims-product/.env.postgres
+#    ports:
+#      - "5433:5433"
+#    deploy:
+#      replicas: 1
+#      placement:
+#        constraints:
+#          - node.hostname == database
+#      restart_policy:
+#        condition: on-failure
+#    networks:
+#      - app-network
+#
+#  inv-postgres-sql:
+#    image: postgres:alpine
+#    volumes:
+#      - data-inv-postgres-sql:/var/lib/postgresql/data
+#    env_file:
+#      - ov-ims-inv/.env.postgres
+#    ports:
+#      - "5434:5434"
+#    deploy:
+#      replicas: 1
+#      placement:
+#        constraints:
+#          - node.hostname == database
+#      restart_policy:
+#        condition: on-failure
+#    networks:
+#      - app-network
+#
+#  order-postgres-sql:
+#    image: postgres:alpine
+#    volumes:
+#      - data-order-postgres-sql:/var/lib/postgresql/data
+#    env_file:
+#      - ov-ims-order/.env.postgres
+#    ports:
+#      - "5434:5434"
+#    deploy:
+#      replicas: 1
+#      placement:
+#        constraints:
+#          - node.hostname == database
+#      restart_policy:
+#        condition: on-failure
+#    networks:
+#      - app-network
 
   ov-ims-product:
-    depends_on:
-      - product-postgres-sql
+#    depends_on:
+#      - product-postgres-sql
     image: openjdk:21
     container_name: ov-ims-product
     env_file:
@@ -45,4 +85,75 @@ services:
       - "8080:8080"
     volumes:
       - ./ov-ims-product/target/ov-ims-product-0.0.1-SNAPSHOT.jar:/app/app.jar
-    command: ["java", "-jar", "/app/app.jar"]
+    command: [ "java", "-jar", "/app/app.jar" ]
+    networks:
+      - app-network
+
+  ov-ims-inv:
+#    depends_on:
+#      - inv-postgres-sql
+    image: openjdk:21
+    container_name: ov-ims-inv
+    env_file:
+      - ov-ims-inv/.env
+      - ov-ims-inv/.env.postgres
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname != database
+      update_config:
+        parallelism: 1
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./ov-ims-inv/target/ov-ims-inv-0.0.1-SNAPSHOT.jar:/app/app.jar
+    command: [ "java", "-jar", "/app/app.jar" ]
+    networks:
+      - app-network
+
+  ov-ims-order:
+#    depends_on:
+#      - order-postgres-sql
+    image: openjdk:21
+    container_name: ov-ims-order
+    env_file:
+      - ov-ims-order/.env
+      - ov-ims-order/.env.postgres
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname != database
+      update_config:
+        parallelism: 1
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./ov-ims-order/target/ov-ims-order-0.0.1-SNAPSHOT.jar:/app/app.jar
+    command: [ "java", "-jar", "/app/app.jar" ]
+    networks:
+      - app-network
+
+  kafka-1:
+    image: apache/kafka:latest
+    container_name: kafka-1
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://kafka-1:9092,CONTROLLER://kafka-1:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 3
+    networks:
+      - app-network
