@@ -1,4 +1,4 @@
-package io.github.jotabrc.ov_ims_order.config;
+package io.github.jotabrc.ov_ims_inv.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

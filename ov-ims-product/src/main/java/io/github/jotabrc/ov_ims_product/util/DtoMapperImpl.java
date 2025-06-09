@@ -1,9 +1,11 @@
 package io.github.jotabrc.ov_ims_product.util;
 
 import io.github.jotabrc.ov_ims_product.dto.CategoryDto;
+import io.github.jotabrc.ov_ims_product.dto.GetPage;
 import io.github.jotabrc.ov_ims_product.dto.ProductDto;
 import io.github.jotabrc.ov_ims_product.model.Category;
 import io.github.jotabrc.ov_ims_product.model.Product;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
@@ -31,6 +33,27 @@ public class DtoMapperImpl implements DtoMapper {
                 .builder()
                 .uuid(category.getUuid())
                 .name(category.getName())
+                .build();
+    }
+
+    @Override
+    public GetPage<ProductDto> toDto(Page<Product> page) {
+        return GetPage
+                .<ProductDto>builder()
+                .content(
+                        page.getContent()
+                        .stream()
+                                .map(this::toDto)
+                        .toList()
+                )
+                .last(page.isLast())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .first(page.isFirst())
+                .size(page.getSize())
+                .number(page.getNumber())
+                .numberOfElements(page.getNumberOfElements())
+                .empty(page.isEmpty())
                 .build();
     }
 }

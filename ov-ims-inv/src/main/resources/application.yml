@@ -24,6 +24,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  redis:
+    host: redis-cache
+    port: ${REDIS_PORT}
+    password: ${REDIS_PASSWORD}
 
 springdoc:
   api-docs:
@@ -36,3 +40,8 @@ domain:
   rules:
     save:
       max-retries: 5
+rate:
+  limiter:
+    enforce: true
+    tries: 50
+    ttl: 2

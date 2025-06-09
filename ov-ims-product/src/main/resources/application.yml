@@ -24,6 +24,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  redis:
+    host: redis-cache
+    port: ${REDIS_PORT}
+    password: ${REDIS_PASSWORD}
 
 springdoc:
   api-docs:
@@ -31,4 +35,8 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui
-
+rate:
+  limiter:
+    enforce: true
+    tries: 50
+    ttl: 2

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.jotabrc.ov_ims_inv.controller.handler.ProductNotFoundException;
 import io.github.jotabrc.ov_ims_inv.dto.*;
 import io.github.jotabrc.ov_ims_inv.kafka.KafkaProducer;
+import io.github.jotabrc.ov_ims_inv.logging.Log;
 import io.github.jotabrc.ov_ims_inv.model.Inventory;
 import io.github.jotabrc.ov_ims_inv.repository.InventoryRepository;
 import io.github.jotabrc.ov_ims_inv.service.strategy.update.UpdateProcessor;
@@ -27,6 +28,7 @@ public class InventoryUpdateServiceImpl implements InventoryUpdateService {
     private final MapperService mapperService;
     private final KafkaProducer kafkaProducer;
 
+    @Log
     @Override
     public void update(final InventoryDtoUpdate dto) {
         ifRequestedAmountIsZeroOrLessThrow(dto);
@@ -37,7 +39,7 @@ public class InventoryUpdateServiceImpl implements InventoryUpdateService {
         inventoryRepository.save(inventory);
     }
 
-    @Transactional
+    @Transactional @Log
     @Override
     public void update(final OrderDtoKafka orderDto) throws JsonProcessingException {
         boolean isReserved = false;

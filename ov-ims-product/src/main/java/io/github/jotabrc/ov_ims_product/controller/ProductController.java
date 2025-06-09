@@ -1,13 +1,13 @@
 package io.github.jotabrc.ov_ims_product.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.github.jotabrc.ov_ims_product.dto.GetPage;
 import io.github.jotabrc.ov_ims_product.dto.PageFilter;
 import io.github.jotabrc.ov_ims_product.dto.ProductDto;
 import io.github.jotabrc.ov_ims_product.service.ProductService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -56,7 +56,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProductDto>> get(
+    public ResponseEntity<GetPage<ProductDto>> get(
             @RequestParam(required = false) final String uuid,
             @RequestParam(required = false) final String category,
             @NotNull final Pageable pageable
@@ -66,7 +66,7 @@ public class ProductController {
                 .uuid(uuid)
                 .category(category)
                 .build();
-        Page<ProductDto> page = productService.get(pageFilter, pageable);
+        GetPage<ProductDto> page = productService.get(pageFilter, pageable);
         return ResponseEntity
                 .ok(page);
     }

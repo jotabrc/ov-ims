@@ -4,6 +4,7 @@ import io.github.jotabrc.ov_ims_inv.controller.handler.InventoryUpdateException;
 import io.github.jotabrc.ov_ims_inv.controller.handler.ProductAlreadyExistsException;
 import io.github.jotabrc.ov_ims_inv.dto.InventoryDto;
 import io.github.jotabrc.ov_ims_inv.dto.PageFilter;
+import io.github.jotabrc.ov_ims_inv.logging.Log;
 import io.github.jotabrc.ov_ims_inv.model.Inventory;
 import io.github.jotabrc.ov_ims_inv.repository.InventoryRepository;
 import io.github.jotabrc.ov_ims_inv.service.strategy.filter.GetFilterProcessor;
@@ -26,7 +27,7 @@ public class InventoryServiceImpl implements InventoryService {
     private final MapperService mapperService;
     private final GetFilterProcessor<InventoryDto> getFilterProcessor;
 
-    @Async
+    @Async @Log
     @Override
     public void save(final String productUuid) {
         int retries = 0;
@@ -47,6 +48,7 @@ public class InventoryServiceImpl implements InventoryService {
         );
     }
 
+    @Log
     @Override
     public Object get(PageFilter pageFilter, Pageable pageable) {
         return getFilterProcessor

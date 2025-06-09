@@ -24,6 +24,7 @@ public class KafkaEventConsumer {
 
     private final OrderService orderService;
     private final RedisConfig redisConfig;
+    private final ObjectMapper objectMapper;
 
     @KafkaListener(topics = {"RESERVE_REPLY"},
             containerFactory = "kafkaListenerContainerFactory")
@@ -33,9 +34,7 @@ public class KafkaEventConsumer {
     )
     public void listener(ConsumerRecord<String, String> record) throws JsonProcessingException {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
             OrderDtoReservedMessage message = objectMapper.readValue(record.value(), OrderDtoReservedMessage.class);
-
             buildReaction(message);
         } catch (JsonProcessingException e) {
             log.error("Message deserialization error: {}", record.value(), e);
@@ -61,7 +60,7 @@ public class KafkaEventConsumer {
                 .opsForValue()
                 .setIfAbsent(message.getUuid(), message);
         if (Boolean.FALSE.equals(firstAttempt)) {
-            log.warn("Message already processed for message: {}", message.getUuid());
+            log.warn("Message already processed for key: {}", message.getUuid());
             return true;
         }
         return false;

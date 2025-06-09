@@ -24,6 +24,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  redis:
+    host: redis-cache
+    port: ${REDIS_PORT}
+    password: ${REDIS_PASSWORD}
 
   h2:
     console:

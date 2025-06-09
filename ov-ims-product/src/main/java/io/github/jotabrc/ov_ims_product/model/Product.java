@@ -28,7 +28,7 @@ public class Product {
     @Column(length = 500)
     private String description;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "tb_product_category",
             joinColumns = @JoinColumn(name = "product_id"),

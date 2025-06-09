@@ -2,12 +2,15 @@ package io.github.jotabrc.ov_ims_product.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.jotabrc.ov_ims_product.controller.handler.ProductNotFoundException;
+import io.github.jotabrc.ov_ims_product.dto.GetPage;
 import io.github.jotabrc.ov_ims_product.dto.PageFilter;
 import io.github.jotabrc.ov_ims_product.dto.ProductDto;
 import io.github.jotabrc.ov_ims_product.kafka.KafkaProducer;
+import io.github.jotabrc.ov_ims_product.logging.Log;
 import io.github.jotabrc.ov_ims_product.model.Category;
 import io.github.jotabrc.ov_ims_product.model.Product;
 import io.github.jotabrc.ov_ims_product.repository.ProductRepository;
+import io.github.jotabrc.ov_ims_product.util.Cache;
 import io.github.jotabrc.ov_ims_product.util.DtoMapper;
 import io.github.jotabrc.ov_ims_product.util.EntityCreatorMapper;
 import lombok.AllArgsConstructor;
@@ -32,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
     private final EntityCreatorMapper entityMapper;
     private final DtoMapper dtoMapper;
 
-    @Transactional
+    @Transactional @Log
     @Override
     public String save(final ProductDto dto) throws JsonProcessingException {
         Product product = entityMapper.toEntity(dto);
@@ -43,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
         return uuid;
     }
 
-    @Transactional
+    @Transactional @Log
     @Override
     public void update(final ProductDto dto) {
         Product product = getOrElseThrow(dto.getUuid());
@@ -53,18 +56,18 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
     }
 
-    @Override
+    @Override @Log
     public void deactivate(final String uuid) {
         Product product = getOrElseThrow(uuid);
         product.setActive(false);
         productRepository.save(product);
     }
 
-    @Override
-    public Page<ProductDto> get(final PageFilter pageFilter, final Pageable pageable) {
-        return productRepository
-                .getWith(pageFilter.getUuid(), pageFilter.getCategory(), pageable)
-                .map(dtoMapper::toDto);
+    @Override @Log @Cache(params = {"pageFilter:uuid", "pageable:pageSize"})
+    public GetPage<ProductDto> get(final PageFilter pageFilter, final Pageable pageable) {
+        Page<Product> page = productRepository
+                .getWith(pageFilter.getUuid(), pageFilter.getCategory(), pageable);
+        return dtoMapper.toDto(page);
     }
 
     private Product getOrElseThrow(final String uuid) {

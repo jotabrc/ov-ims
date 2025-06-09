@@ -1,6 +1,7 @@
 package io.github.jotabrc.ov_ims_product.service;
 
 import io.github.jotabrc.ov_ims_product.dto.CategoryDto;
+import io.github.jotabrc.ov_ims_product.logging.Log;
 import io.github.jotabrc.ov_ims_product.model.Category;
 import io.github.jotabrc.ov_ims_product.repository.CategoryRepository;
 import io.github.jotabrc.ov_ims_product.util.EntityCreatorMapper;
@@ -19,13 +20,13 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final EntityCreatorMapper entityMapper;
 
-    @Transactional
+    @Transactional @Log
     @Override
     public void saveAll(Set<Category> categories) {
         categoryRepository.saveAll(categories);
     }
 
-    @Transactional
+    @Transactional @Log
     @Override
     public Set<Category> resolveCategories(final Set<CategoryDto> dtos) {
         Set<Category> newCategories = new HashSet<>();
