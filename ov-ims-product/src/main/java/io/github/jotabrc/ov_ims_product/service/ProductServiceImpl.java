@@ -63,7 +63,7 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
     }
 
-    @Override @Log @Cache(params = {"pageFilter:uuid", "pageable:pageSize"})
+    @Override @Log @Cache(params = {"PageFilter:getUuid:getCategory", "Pageable:getPageSize:getPageNumber:getOffset"})
     public GetPage<ProductDto> get(final PageFilter pageFilter, final Pageable pageable) {
         Page<Product> page = productRepository
                 .getWith(pageFilter.getUuid(), pageFilter.getCategory(), pageable);
