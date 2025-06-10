@@ -6,6 +6,8 @@ import io.github.jotabrc.ov_ims_order.dto.OrderDtoAdd;
 import io.github.jotabrc.ov_ims_order.dto.OrderUpdateTypeDto;
 import io.github.jotabrc.ov_ims_order.dto.PageFilter;
 import io.github.jotabrc.ov_ims_order.service.OrderService;
+import io.github.jotabrc.ov_ims_order.validation.StringType;
+import io.github.jotabrc.ov_ims_order.validation.ValidString;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -30,7 +32,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<String> save(@Valid @RequestBody final OrderDtoAdd dto) throws JsonProcessingException {
+    public ResponseEntity<String> save(@Valid @NotNull @RequestBody final OrderDtoAdd dto) throws JsonProcessingException {
         String uuid = orderService.save(dto);
         URI location = ServletUriComponentsBuilder
                 .fromPath("/order/{uuid}")
@@ -42,7 +44,7 @@ public class OrderController {
     }
 
     @PutMapping
-    public ResponseEntity<String> update(@Valid @RequestBody OrderUpdateTypeDto dto) throws JsonProcessingException {
+    public ResponseEntity<String> update(@Valid @NotNull @RequestBody OrderUpdateTypeDto dto) throws JsonProcessingException {
         orderService.update(dto);
         return ResponseEntity
                 .noContent()
@@ -51,7 +53,9 @@ public class OrderController {
 
     @GetMapping
     public ResponseEntity<Page<OrderDto>> get(
+            @ValidString(error = "Invalid Product UUID format", type = StringType.UUID, isRequired = false)
             @RequestParam(required = false) final String uuid,
+            @ValidString(error = "Invalid Product UUID format", type = StringType.UUID, isRequired = false)
             @RequestParam(required = false) final String placedBy,
             @NotNull final Pageable pageable
             ) {

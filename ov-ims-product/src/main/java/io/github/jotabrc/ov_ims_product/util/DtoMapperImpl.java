@@ -1,6 +1,7 @@
 package io.github.jotabrc.ov_ims_product.util;
 
 import io.github.jotabrc.ov_ims_product.dto.CategoryDto;
+import io.github.jotabrc.ov_ims_product.dto.CategoryDtoAdd;
 import io.github.jotabrc.ov_ims_product.dto.GetPage;
 import io.github.jotabrc.ov_ims_product.dto.ProductDto;
 import io.github.jotabrc.ov_ims_product.model.Category;
@@ -33,6 +34,14 @@ public class DtoMapperImpl implements DtoMapper {
                 .builder()
                 .uuid(category.getUuid())
                 .name(category.getName())
+                .build();
+    }
+
+    @Override
+    public CategoryDto toDto(CategoryDtoAdd dto) {
+        return CategoryDto
+                .builder()
+                .name(dto.getName())
                 .build();
     }
 

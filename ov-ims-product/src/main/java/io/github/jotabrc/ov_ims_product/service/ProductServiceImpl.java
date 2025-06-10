@@ -2,9 +2,7 @@ package io.github.jotabrc.ov_ims_product.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.jotabrc.ov_ims_product.controller.handler.ProductNotFoundException;
-import io.github.jotabrc.ov_ims_product.dto.GetPage;
-import io.github.jotabrc.ov_ims_product.dto.PageFilter;
-import io.github.jotabrc.ov_ims_product.dto.ProductDto;
+import io.github.jotabrc.ov_ims_product.dto.*;
 import io.github.jotabrc.ov_ims_product.kafka.KafkaProducer;
 import io.github.jotabrc.ov_ims_product.logging.Log;
 import io.github.jotabrc.ov_ims_product.model.Category;
@@ -22,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Validated
 @Service
@@ -37,9 +36,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional @Log
     @Override
-    public String save(final ProductDto dto) throws JsonProcessingException {
+    public String save(final ProductDtoAdd dto) throws JsonProcessingException {
         Product product = entityMapper.toEntity(dto);
-        Set<Category> categories = categoryService.resolveCategories(dto.getCategories());
+        Set<Category> categories = categoryService.resolveCategories(getCategoryDtos(dto));
         product.setCategories(categories);
         String uuid = productRepository.save(product).getUuid();
         sendProductNewTopic(uuid);
@@ -68,6 +67,13 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> page = productRepository
                 .getWith(pageFilter.getUuid(), pageFilter.getCategory(), pageable);
         return dtoMapper.toDto(page);
+    }
+
+    private Set<CategoryDto> getCategoryDtos(ProductDtoAdd dto) {
+        return dto.getCategories()
+                .stream()
+                .map(dtoMapper::toDto)
+                .collect(Collectors.toSet());
     }
 
     private Product getOrElseThrow(final String uuid) {

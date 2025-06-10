@@ -4,6 +4,8 @@ import io.github.jotabrc.ov_ims_inv.dto.InventoryDtoUpdate;
 import io.github.jotabrc.ov_ims_inv.dto.PageFilter;
 import io.github.jotabrc.ov_ims_inv.service.InventoryService;
 import io.github.jotabrc.ov_ims_inv.service.InventoryUpdateService;
+import io.github.jotabrc.ov_ims_inv.validation.StringType;
+import io.github.jotabrc.ov_ims_inv.validation.ValidString;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -34,6 +36,7 @@ public class InventoryController {
 
     @GetMapping
     public ResponseEntity<Object> get(
+            @ValidString(error = "Invalid Product UUID format", type = StringType.UUID, isRequired = false)
             @RequestParam(required = false) final String productUuid,
             @RequestParam(required = false) final Integer minValue,
             @RequestParam(required = false) final Integer maxValue,

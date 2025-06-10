@@ -12,20 +12,15 @@ import java.io.Serializable;
 
 @Getter
 @Builder
-public class CategoryDto implements Serializable {
-
-    @ValidString(error = "Invalid UUID format", type = StringType.UUID, isRequired = false)
-    private String uuid;
+public class CategoryDtoAdd implements Serializable {
 
     @NotNull @ValidString(error = "Invalid Category name format", type = StringType.NAME)
     private final String name;
 
     @JsonCreator
-    public CategoryDto(
-            @JsonProperty("uuid") String uuid,
+    public CategoryDtoAdd(
             @JsonProperty("name") String name
     ) {
-        this.uuid = uuid;
         this.name = name;
     }
 }

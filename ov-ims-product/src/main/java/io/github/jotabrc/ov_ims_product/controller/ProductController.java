@@ -4,7 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.jotabrc.ov_ims_product.dto.GetPage;
 import io.github.jotabrc.ov_ims_product.dto.PageFilter;
 import io.github.jotabrc.ov_ims_product.dto.ProductDto;
+import io.github.jotabrc.ov_ims_product.dto.ProductDtoAdd;
 import io.github.jotabrc.ov_ims_product.service.ProductService;
+import io.github.jotabrc.ov_ims_product.validation.StringType;
+import io.github.jotabrc.ov_ims_product.validation.ValidString;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -19,16 +23,15 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
-@Validated
-@AllArgsConstructor
-@RestController
+@Validated @AllArgsConstructor @RestController
 @RequestMapping(path = "/product", produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Product Management", description = "Operations related to products")
 public class ProductController {
 
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<String> save(@Valid @RequestBody final ProductDto dto) throws JsonProcessingException {
+    public ResponseEntity<String> save(@Valid @RequestBody final ProductDtoAdd dto) throws JsonProcessingException {
         final String uuid = productService.save(dto);
         URI location = ServletUriComponentsBuilder
                 .fromPath("/product/{uuid}")
@@ -48,7 +51,10 @@ public class ProductController {
     }
 
     @PatchMapping("/{uuid}")
-    public ResponseEntity<String> deactivate(@NotNull @PathVariable("uuid") final String uuid) {
+    public ResponseEntity<String> deactivate(
+            @ValidString(error = "Invalid UUID format", type = StringType.UUID)
+            @PathVariable("uuid") final String uuid
+    ) {
         productService.deactivate(uuid);
         return ResponseEntity
                 .noContent()
@@ -57,7 +63,9 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<GetPage<ProductDto>> get(
+            @ValidString(error = "Invalid UUID format", type = StringType.UUID, isRequired = false)
             @RequestParam(required = false) final String uuid,
+            @ValidString(error = "Invalid Category name format", type = StringType.NAME, isRequired = false)
             @RequestParam(required = false) final String category,
             @NotNull final Pageable pageable
             ) {

@@ -14,10 +14,7 @@ import java.util.Set;
 
 @Getter
 @Builder
-public class ProductDto implements Serializable {
-
-    @ValidString(error = "Invalid UUID format", type = StringType.UUID)
-    private String uuid;
+public class ProductDtoAdd implements Serializable {
 
     @NotNull @ValidString(error = "Invalid Product name format", type = StringType.NAME)
     private final String name;
@@ -26,16 +23,14 @@ public class ProductDto implements Serializable {
     private final String description;
 
     @Valid
-    private final Set<CategoryDto> categories;
+    private final Set<CategoryDtoAdd> categories;
 
     @JsonCreator
-    public ProductDto(
-            @JsonProperty("uuid") String uuid,
+    public ProductDtoAdd(
             @JsonProperty("name") String name,
             @JsonProperty("description") String description,
-            @JsonProperty("categories") Set<CategoryDto> categories
+            @JsonProperty("categories") Set<CategoryDtoAdd> categories
     ) {
-        this.uuid = uuid;
         this.name = name;
         this.description = description;
         this.categories = categories;

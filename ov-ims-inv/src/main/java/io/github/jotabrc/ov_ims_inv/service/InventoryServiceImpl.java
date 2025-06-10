@@ -9,7 +9,8 @@ import io.github.jotabrc.ov_ims_inv.model.Inventory;
 import io.github.jotabrc.ov_ims_inv.repository.InventoryRepository;
 import io.github.jotabrc.ov_ims_inv.service.strategy.filter.GetFilterProcessor;
 import io.github.jotabrc.ov_ims_inv.util.MapperService;
-import jakarta.validation.constraints.NotNull;
+import io.github.jotabrc.ov_ims_inv.validation.StringType;
+import io.github.jotabrc.ov_ims_inv.validation.ValidString;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -27,9 +28,13 @@ public class InventoryServiceImpl implements InventoryService {
     private final MapperService mapperService;
     private final GetFilterProcessor<InventoryDto> getFilterProcessor;
 
-    @Async @Log
+    @Async
+    @Log
     @Override
-    public void save(final String productUuid) {
+    public void save(
+            @ValidString(error = "Invalid Product UUID format", type = StringType.UUID)
+            final String productUuid
+    ) {
         int retries = 0;
         while (retries < 5) {
             try {
@@ -56,7 +61,7 @@ public class InventoryServiceImpl implements InventoryService {
                 .filter(pageFilter, pageable);
     }
 
-    private void ifExistsThrow(@NotNull final String productUuid) {
+    private void ifExistsThrow(final String productUuid) {
         boolean exists = inventoryRepository.existsByProductUuid(productUuid);
         if (exists)
             throw new ProductAlreadyExistsException("Product %s already exists, duplicates are not allowed"
