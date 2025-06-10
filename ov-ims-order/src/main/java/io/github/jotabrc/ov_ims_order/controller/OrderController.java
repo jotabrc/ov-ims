@@ -53,9 +53,9 @@ public class OrderController {
 
     @GetMapping
     public ResponseEntity<Page<OrderDto>> get(
-            @ValidString(error = "Invalid Product UUID format", type = StringType.UUID, isRequired = false)
+            @ValidString(message = "Invalid Product UUID format", type = StringType.UUID, isRequired = false)
             @RequestParam(required = false) final String uuid,
-            @ValidString(error = "Invalid Product UUID format", type = StringType.UUID, isRequired = false)
+            @ValidString(message = "Invalid Product UUID format", type = StringType.UUID, isRequired = false)
             @RequestParam(required = false) final String placedBy,
             @NotNull final Pageable pageable
             ) {

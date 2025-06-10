@@ -14,10 +14,10 @@ import java.io.Serializable;
 @Builder
 public class CategoryDto implements Serializable {
 
-    @ValidString(error = "Invalid UUID format", type = StringType.UUID, isRequired = false)
+    @ValidString(message = "Invalid UUID format", type = StringType.UUID, isRequired = false)
     private String uuid;
 
-    @NotNull @ValidString(error = "Invalid Category name format", type = StringType.NAME)
+    @NotNull @ValidString(message = "Invalid Category name format", type = StringType.NAME)
     private final String name;
 
     @JsonCreator

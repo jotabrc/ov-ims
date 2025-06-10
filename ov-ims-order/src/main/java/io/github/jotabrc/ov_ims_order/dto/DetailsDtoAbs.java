@@ -9,7 +9,7 @@ import lombok.Getter;
 @Getter @AllArgsConstructor
 public class DetailsDtoAbs {
 
-    @ValidString(error = "Invalid Product UUID format", type = StringType.UUID)
+    @ValidString(message = "Invalid Product UUID format", type = StringType.UUID)
     private final String productUuid;
 
     @Min(value = 1)

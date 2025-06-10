@@ -2,10 +2,10 @@ package io.github.jotabrc.ov_ims_product.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Component @AllArgsConstructor
+@Component @RequiredArgsConstructor
 public class ValidateString implements ConstraintValidator<ValidString, String> {
 
     private final ValidationMatcher validationMatcher;
@@ -30,7 +30,7 @@ public class ValidateString implements ConstraintValidator<ValidString, String> 
     public void initialize(ValidString annotation) {
         selectPattern(annotation);
         this.isRequired = annotation.isRequired();
-        this.message = annotation.error();
+        this.message = annotation.message();
         ConstraintValidator.super.initialize(annotation);
     }
 

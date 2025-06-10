@@ -16,13 +16,13 @@ import java.util.Set;
 @Builder
 public class ProductDto implements Serializable {
 
-    @ValidString(error = "Invalid UUID format", type = StringType.UUID)
+    @ValidString(message = "Invalid UUID format", type = StringType.UUID)
     private String uuid;
 
-    @NotNull @ValidString(error = "Invalid Product name format", type = StringType.NAME)
+    @NotNull @ValidString(message = "Invalid Product name format", type = StringType.NAME)
     private final String name;
 
-    @ValidString(error = "Invalid Product description format", type = StringType.STRING, isRequired = false)
+    @ValidString(message = "Invalid Product description format", type = StringType.STRING, isRequired = false)
     private final String description;
 
     @Valid

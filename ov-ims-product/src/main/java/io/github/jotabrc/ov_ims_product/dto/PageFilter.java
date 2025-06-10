@@ -8,9 +8,9 @@ import lombok.Getter;
 @Getter @Builder
 public class PageFilter {
 
-    @ValidString(error = "Invalid UUID format", type = StringType.UUID, isRequired = false)
+    @ValidString(message = "Invalid UUID format", type = StringType.UUID, isRequired = false)
     private final String uuid;
 
-    @ValidString(error = "Invalid Category name format", type = StringType.NAME, isRequired = false)
+    @ValidString(message = "Invalid Category name format", type = StringType.NAME, isRequired = false)
     private final String category;
 }

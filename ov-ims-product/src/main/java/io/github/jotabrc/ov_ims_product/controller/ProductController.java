@@ -52,7 +52,7 @@ public class ProductController {
 
     @PatchMapping("/{uuid}")
     public ResponseEntity<String> deactivate(
-            @ValidString(error = "Invalid UUID format", type = StringType.UUID)
+            @ValidString(message = "Invalid UUID format", type = StringType.UUID)
             @PathVariable("uuid") final String uuid
     ) {
         productService.deactivate(uuid);
@@ -63,9 +63,9 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<GetPage<ProductDto>> get(
-            @ValidString(error = "Invalid UUID format", type = StringType.UUID, isRequired = false)
+            @ValidString(message = "Invalid UUID format", type = StringType.UUID, isRequired = false)
             @RequestParam(required = false) final String uuid,
-            @ValidString(error = "Invalid Category name format", type = StringType.NAME, isRequired = false)
+            @ValidString(message = "Invalid Category name format", type = StringType.NAME, isRequired = false)
             @RequestParam(required = false) final String category,
             @NotNull final Pageable pageable
             ) {

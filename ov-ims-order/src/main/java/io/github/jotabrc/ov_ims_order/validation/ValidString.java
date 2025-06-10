@@ -1,6 +1,7 @@
 package io.github.jotabrc.ov_ims_order.validation;
 
 import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,7 +12,9 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidString {
-    String error() default "Invalid String format";
+    String message() default "Invalid String format";
+    Class<?>[] groups() default {};
+    Class<? extends Payload>[] payload() default {};
     StringType type() default StringType.STRING;
     boolean isRequired() default true;
 }

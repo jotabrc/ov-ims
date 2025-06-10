@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public abstract class InventoryDtoAbs {
 
-    @ValidString(error = "Invalid Product UUID format", type = StringType.UUID)
+    @ValidString(message = "Invalid Product UUID format", type = StringType.UUID)
     private final String productUuid;
 
     @Min(0)

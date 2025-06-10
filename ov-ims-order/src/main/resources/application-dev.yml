@@ -53,3 +53,11 @@ logging:
     org.springframework.servlet.DispatcherServlet: DEBUG
     org.springframework.data.redis: DEBUG
     org.springframework.cache.interceptor: DEBUG
+
+ov:
+  ims:
+    validation:
+      pattern:
+        name: "[\\p{L}\\p{M}\\.\\s'-]{4,255}"
+        string: "^$|^[A-Za-z0-9.,;!-'?§¶(){}\\[\\]€$R$\\s\\p{M}\\p{L}]+$"
+        uuid: "\\p{XDigit}{8}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{12}"

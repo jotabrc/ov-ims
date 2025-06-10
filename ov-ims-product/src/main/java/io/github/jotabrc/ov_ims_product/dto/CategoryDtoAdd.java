@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Builder
 public class CategoryDtoAdd implements Serializable {
 
-    @NotNull @ValidString(error = "Invalid Category name format", type = StringType.NAME)
+    @NotNull @ValidString(message = "Invalid Category name format", type = StringType.NAME)
     private final String name;
 
     @JsonCreator

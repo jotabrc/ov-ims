@@ -12,7 +12,7 @@ import java.util.List;
 @Getter @AllArgsConstructor
 public abstract class OrderDtoAbs {
 
-    @NotNull @ValidString(error = "Invalid UUID format for placeBy field", type = StringType.UUID)
+    @NotNull @ValidString(message = "Invalid UUID format for placeBy field", type = StringType.UUID)
     private final String placedBy;
 
     @NotNull @Valid

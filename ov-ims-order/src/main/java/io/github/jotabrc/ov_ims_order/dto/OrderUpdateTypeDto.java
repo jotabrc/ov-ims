@@ -15,7 +15,7 @@ public class OrderUpdateTypeDto {
 
     private final UpdateType type;
 
-    @ValidString(error = "Invalid Order UUID format", type = StringType.UUID)
+    @ValidString(message = "Invalid Order UUID format", type = StringType.UUID)
     private final String uuid;
     private final OrderStatus status;
 

@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 
 public interface ValidationMatcher {
 
-    <T> boolean isNull(T t);
+    <T> boolean isNotNull(T t);
     boolean isNotBlank(String string);
     boolean isNotNullNorBlank(String string);
     boolean match(@NotNull String string, @NotNull String regex);

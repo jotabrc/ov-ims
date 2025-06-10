@@ -36,7 +36,7 @@ public class InventoryController {
 
     @GetMapping
     public ResponseEntity<Object> get(
-            @ValidString(error = "Invalid Product UUID format", type = StringType.UUID, isRequired = false)
+            @ValidString(message = "Invalid Product UUID format", type = StringType.UUID, isRequired = false)
             @RequestParam(required = false) final String productUuid,
             @RequestParam(required = false) final Integer minValue,
             @RequestParam(required = false) final Integer maxValue,

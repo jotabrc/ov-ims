@@ -32,7 +32,7 @@ public class InventoryServiceImpl implements InventoryService {
     @Log
     @Override
     public void save(
-            @ValidString(error = "Invalid Product UUID format", type = StringType.UUID)
+            @ValidString(message = "Invalid Product UUID format", type = StringType.UUID)
             final String productUuid
     ) {
         int retries = 0;
