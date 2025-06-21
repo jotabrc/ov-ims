@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
+@Deprecated(forRemoval = true)
 @Component
 public class DtoMapperImpl implements DtoMapper {
 

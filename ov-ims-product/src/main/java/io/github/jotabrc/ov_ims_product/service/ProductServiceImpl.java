@@ -9,8 +9,7 @@ import io.github.jotabrc.ov_ims_product.model.Category;
 import io.github.jotabrc.ov_ims_product.model.Product;
 import io.github.jotabrc.ov_ims_product.repository.ProductRepository;
 import io.github.jotabrc.ov_ims_product.util.Cache;
-import io.github.jotabrc.ov_ims_product.util.DtoMapper;
-import io.github.jotabrc.ov_ims_product.util.EntityCreatorMapper;
+import io.github.jotabrc.ov_ims_product.util.MapperFacade;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,13 +30,12 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryService categoryService;
 
     private final KafkaProducer kafkaProducer;
-    private final EntityCreatorMapper entityMapper;
-    private final DtoMapper dtoMapper;
+    private final MapperFacade mapperFacade;
 
     @Transactional @Log
     @Override
     public String save(final ProductDtoAdd dto) throws JsonProcessingException {
-        Product product = entityMapper.toEntity(dto);
+        Product product = mapperFacade.productDtoAddToProduct(dto);
         Set<Category> categories = categoryService.resolveCategories(getCategoryDtos(dto));
         product.setCategories(categories);
         String uuid = productRepository.save(product).getUuid();
@@ -66,13 +64,13 @@ public class ProductServiceImpl implements ProductService {
     public GetPage<ProductDto> get(final PageFilter pageFilter, final Pageable pageable) {
         Page<Product> page = productRepository
                 .getWith(pageFilter.getUuid(), pageFilter.getCategory(), pageable);
-        return dtoMapper.toDto(page);
+        return mapperFacade.pageProductToGetPageProductDto(page);
     }
 
     private Set<CategoryDto> getCategoryDtos(ProductDtoAdd dto) {
         return dto.getCategories()
                 .stream()
-                .map(dtoMapper::toDto)
+                .map(mapperFacade::categoryDtoAddToCategoryDto)
                 .collect(Collectors.toSet());
     }
 

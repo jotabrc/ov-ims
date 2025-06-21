@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+@Deprecated(forRemoval = true)
 @Component
 public class EntityCreatorMapperImpl implements EntityCreatorMapper {
 

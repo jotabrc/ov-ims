@@ -4,7 +4,7 @@ import io.github.jotabrc.ov_ims_product.dto.CategoryDto;
 import io.github.jotabrc.ov_ims_product.logging.Log;
 import io.github.jotabrc.ov_ims_product.model.Category;
 import io.github.jotabrc.ov_ims_product.repository.CategoryRepository;
-import io.github.jotabrc.ov_ims_product.util.EntityCreatorMapper;
+import io.github.jotabrc.ov_ims_product.util.MapperFacade;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final EntityCreatorMapper entityMapper;
+    private final MapperFacade mapperFacade;
 
     @Transactional @Log
     @Override
@@ -42,7 +42,7 @@ public class CategoryServiceImpl implements CategoryService {
         return
                 categoryRepository.findByName(dto.getName())
                         .orElseGet(() -> categoryRepository.findByUuid(dto.getUuid()).orElseGet(() -> {
-                                    Category category = entityMapper.toEntity(dto);
+                                    Category category = mapperFacade.categoryDtoToCategory(dto);
                                     newCategories.add(category);
                                     return category;
                                 })
